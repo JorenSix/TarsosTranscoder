@@ -1,31 +1,62 @@
-Tarsos Audio Transcoder
+Tarsos Transcoder
 =======================
+Tarsos Transcoder is a library to transcode audio with JAVA.
 
-Tarsos Audio Transcoder is a library to transcode audio with JAVA.
-It uses (platform dependent) FFMPEG binaries in the background. It is
+Downloads and more info on http://tarsos.0110.be/tag/TarsosTranscoder
+
+It uses (platform dependent) FFmpeg binaries in the background. It is
 a fork of JAVE (Java Audio and Video Encoder) by Carlo Pelliccia 
-(www.sauronsoftware.it). 
+(www.sauronsoftware.it).
 
 Tarsos Audio Transcoder focuses only on audio and it is compatible 
-with more, and more recent FFMPEG binaries and it less dependent on 
+with more, and more recent FFmpeg binaries and it less dependent on 
 text output of the different binaries. The interface is also 
 simplified.
 
 INTERFACE
 =========
-
-To use the transcoder you need to call Transcoder. It is as simple as that:
+To use the transcoder you need to call Transcoder. It is as simple as:
 
 Transcoder.transcode("foo.mp3","foo.wav",DefaultAttributes.WAV_PCM_S16LE_STEREO_44KHZ);
 
-FFMPEG can encode to a lot of formats and can decode even more.
+FFmpeg can encode to a lot of formats and can decode even more.
+
+
+INNER WORKINGS
+==============
+Tarsos Transcoder tries to find an FFmpeg binary in the path of the system.
+If it does not find one it tries to copy a binary for the current platform.
+Tarsos Transcoder contains three binaries: one for MAC OS X, one for Linux
+(x86) and one for windows. Tarsos Transcoder has been tested on:
+
+* MAC OS X 10.6
+* Windows 7 
+* Ubuntu linux 10.10 ARM 
+* Ubuntu Linux 10.04 x86_64
+
+It will probably work most of the time.
 
 ALT BINARIES
 ============
-
 Providing binaries for your (unsupported) platform can be done by implementing
 FFMPEGLocator. The PickMe method should yield true on your platform and copy e.g.
-an ffmpeg binary to the temporary directory. 
+an FFmpeg binary to a temporary directory.
+
+
+LICENSE
+=======
+GPL
+
+CREDITS 
+=======
+JAVE (Java Audio and Video Encoder) by Carlo Pelliccia - www.sauronsoftware.it
+FFmpeg http://www.ffmpeg.org: this uses libraries from the FFmpeg project under the LGPLv2.1
+
+TarsosTranscoder is used by Tarsos http://tarsos.0110.be and
+Tarsos is developed at University College Ghent, Faculty of Music
+
+
+
 
 
 
