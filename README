@@ -1,0 +1,34 @@
+Tarsos Audio Transcoder
+=======================
+
+Tarsos Audio Transcoder is a library to transcode audio with JAVA.
+It uses (platform dependent) FFMPEG binaries in the background. It is
+a fork of JAVE (Java Audio and Video Encoder) by Carlo Pelliccia 
+(www.sauronsoftware.it). 
+
+Tarsos Audio Transcoder focuses only on audio and it is compatible 
+with more, and more recent FFMPEG binaries and it less dependent on 
+text output of the different binaries. The interface is also 
+simplified.
+
+INTERFACE
+=========
+
+To use the transcoder you need to call Transcoder. It is as simple as that:
+
+Transcoder.transcode("foo.mp3","foo.wav",DefaultAttributes.WAV_PCM_S16LE_STEREO_44KHZ);
+
+FFMPEG can encode to a lot of formats and can decode even more.
+
+ALT BINARIES
+============
+
+Providing binaries for your (unsupported) platform can be done by implementing
+FFMPEGLocator. The PickMe method should yield true on your platform and copy e.g.
+an ffmpeg binary to the temporary directory. 
+
+
+
+ 
+
+  
