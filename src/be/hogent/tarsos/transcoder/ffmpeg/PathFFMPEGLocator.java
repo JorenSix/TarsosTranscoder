@@ -1,8 +1,6 @@
 package be.hogent.tarsos.transcoder.ffmpeg;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,19 +29,10 @@ public final class PathFFMPEGLocator extends FFMPEGLocator {
 			FFMPEGExecutor executor = new FFMPEGExecutor("ffmpeg");
 			executor.addArgument("-version");
 			try {
-				executor.execute();
-				BufferedReader reader = null;
-				reader = new BufferedReader(new InputStreamReader(executor.getErrorStream()));
-				StringBuilder builder = new StringBuilder();
-				String inputLine = reader.readLine();
-				while (inputLine != null) {
-					builder.append(inputLine);
-					builder.append("\n");
-					inputLine = reader.readLine();
-				}
+				String out = executor.execute(0);				
 				Pattern versionPattern = Pattern.compile(".*Version.*", Pattern.CASE_INSENSITIVE
 						| Pattern.MULTILINE | Pattern.UNIX_LINES);
-				Matcher versionMatcher = versionPattern.matcher(builder.toString());
+				Matcher versionMatcher = versionPattern.matcher(out);
 				ffmpegInPath = versionMatcher.find();
 			} catch (IOException e) {
 				ffmpegInPath = false;

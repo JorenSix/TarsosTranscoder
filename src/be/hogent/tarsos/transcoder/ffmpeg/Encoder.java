@@ -18,10 +18,8 @@
  */
 package be.hogent.tarsos.transcoder.ffmpeg;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
@@ -102,18 +100,12 @@ public class Encoder {
 	public Attributes getInfo(File source) throws InputFormatException, EncoderException {
 		FFMPEGExecutor ffmpeg = locator.createExecutor();
 		ffmpeg.addArgument("-i");
-		ffmpeg.addArgument(source.getAbsolutePath());
+		ffmpeg.addFileArgument(source.getAbsolutePath());
 		try {
-			ffmpeg.execute();
+			String out = ffmpeg.execute(1);
+			return parseAudioAttributes(source, out);
 		} catch (IOException e) {
 			throw new EncoderException(e);
-		}
-		try {
-			BufferedReader reader = null;
-			reader = new BufferedReader(new InputStreamReader(ffmpeg.getErrorStream()));
-			return parseAudioAttributes(source, reader);
-		} finally {
-			ffmpeg.destroy();
 		}
 	}
 
@@ -133,7 +125,7 @@ public class Encoder {
 	 * @throws EncoderException
 	 *             If a problem occurs calling the underlying ffmpeg executable.
 	 */
-	private Attributes parseAudioAttributes(File source, BufferedReader reader) throws InputFormatException,
+	private Attributes parseAudioAttributes(File source,String contents) throws InputFormatException,
 			EncoderException {
 		Pattern p1 = Pattern.compile(".*\\s*Input #0, (\\w+).+$\\s*.*", Pattern.CASE_INSENSITIVE
 				| Pattern.MULTILINE | Pattern.UNIX_LINES);
@@ -145,20 +137,6 @@ public class Encoder {
 		boolean noMatch = true;
 		Attributes info = new Attributes();
 
-		StringBuilder builder = new StringBuilder();
-
-		try {
-			String inputLine = reader.readLine();
-			while (inputLine != null) {
-				builder.append(inputLine);
-				builder.append("\n");
-				inputLine = reader.readLine();
-			}
-		} catch (IOException e) {
-			throw new EncoderException(e);
-		}
-
-		String contents = builder.toString();
 
 		Matcher m = p1.matcher(contents);
 		if (m.find()) {
@@ -262,7 +240,7 @@ public class Encoder {
 		FFMPEGExecutor ffmpeg = locator.createExecutor();
 
 		ffmpeg.addArgument("-i");
-		ffmpeg.addArgument(source.getAbsolutePath());
+		ffmpeg.addFileArgument(source.getAbsolutePath());
 
 		// no video
 		ffmpeg.addArgument("-vn");
@@ -296,23 +274,12 @@ public class Encoder {
 		ffmpeg.addArgument("-f");
 		ffmpeg.addArgument(formatAttribute);
 		ffmpeg.addArgument("-y");
-		ffmpeg.addArgument(target.getAbsolutePath());
+		ffmpeg.addFileArgument(target.getAbsolutePath());
 		try {
-			ffmpeg.execute();
+			String out = ffmpeg.execute(0);
+			LOG.fine(out);
 		} catch (IOException e) {
 			throw new EncoderException(e);
-		}
-		try {
-			BufferedReader reader = null;
-			reader = new BufferedReader(new InputStreamReader(ffmpeg.getErrorStream()));
-			String line;
-			while ((line = reader.readLine()) != null) {
-				LOG.warning(line);
-			}
-		} catch (IOException e) {
-			throw new EncoderException(e);
-		} finally {
-			ffmpeg.destroy();
 		}
 
 		if (target.length() == 0) {
@@ -322,7 +289,8 @@ public class Encoder {
 		} else {
 			long sourceDuration = getInfo(source).getDuration();
 			long targetDuration = getInfo(target).getDuration();
-			if (Math.abs(sourceDuration - targetDuration) > 250) {
+			
+			if (targetDuration != -1 && Math.abs(sourceDuration - targetDuration) > 250) {
 				throw new EncoderException(
 						String.format(
 								"Source and target should have similar duration (source %s duration: %s ms, target %s duration: %s ms).",

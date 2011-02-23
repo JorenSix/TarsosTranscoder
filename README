@@ -50,10 +50,13 @@ GPL
 CREDITS 
 =======
 JAVE (Java Audio and Video Encoder) by Carlo Pelliccia - www.sauronsoftware.it
+
 FFmpeg http://www.ffmpeg.org: this uses libraries from the FFmpeg project under the LGPLv2.1
 
-TarsosTranscoder is used by Tarsos http://tarsos.0110.be and
-Tarsos is developed at University College Ghent, Faculty of Music
+This product includes software developed by The Apache Software Foundation (http://www.apache.org/).
+
+TarsosTranscoder is used by Tarsos http://tarsos.0110.be, Tarsos is developed at 
+University College Ghent, Faculty of Music
 
 
 

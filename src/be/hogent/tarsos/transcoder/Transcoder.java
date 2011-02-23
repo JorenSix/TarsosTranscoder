@@ -131,6 +131,7 @@ public class Transcoder {
 		initialize();
 		// encode the source to directory
 		final Encoder e = new Encoder();
+		LOG.info("Try to transcode " + source + " to " + target);
 		e.encode(source, target, targetEncoding);
 		LOG.info("Successfully transcoded " + source + " to " + target);
 	}

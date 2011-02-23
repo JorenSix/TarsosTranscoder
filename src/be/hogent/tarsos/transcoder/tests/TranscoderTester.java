@@ -4,6 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -23,14 +25,17 @@ public class TranscoderTester {
 
 	@Test
 	public void testTranscoding() throws EncoderException {
+		List<DefaultAttributes> list = new ArrayList<DefaultAttributes>();
+		list.add(DefaultAttributes.WAV_PCM_S16LE_MONO_44KHZ);
+		list.add(DefaultAttributes.WAV_PCM_S16LE_STEREO_44KHZ);
 		// Transcode INPUT_FILE to and from every encoding defined by DEFAULT
 		// ATTRIBUTES
-		for (DefaultAttributes target : DefaultAttributes.values()) {
+		for (DefaultAttributes target : list) {
 			// Transcode the input file
 			String outputFile = "audio/output/out_" + target.name() + "."
 					+ target.getAttributes().getFormat();
 			Transcoder.transcode(INPUT_FILE, outputFile, target);
-			for (DefaultAttributes otherTarget : DefaultAttributes.values()) {
+			for (DefaultAttributes otherTarget : list) {
 				String otherOutputFile = "audio/output/other_out_" + otherTarget.name() + "."
 						+ otherTarget.getAttributes().getFormat();
 				Transcoder.transcode(outputFile, otherOutputFile, otherTarget);
@@ -99,7 +104,7 @@ public class TranscoderTester {
 	public static void cleanOutputDirectory() {
 		for (File tempOutputFile : new File("audio/output/").listFiles()) {
 			if (tempOutputFile.isFile()) {
-				tempOutputFile.delete();
+				//tempOutputFile.delete();
 			}
 		}
 	}

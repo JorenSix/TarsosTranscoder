@@ -18,11 +18,17 @@
  */
 package be.hogent.tarsos.transcoder.ffmpeg;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.logging.Logger;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.PumpStreamHandler;
 
 /**
  * A ffmpeg process wrapper.
@@ -30,8 +36,6 @@ import java.util.logging.Logger;
  * @author Carlo Pelliccia
  */
 class FFMPEGExecutor {
-
-	private static final Logger LOG = Logger.getLogger(FFMPEGExecutor.class.getName());
 
 	/**
 	 * The path of the ffmpeg executable.
@@ -42,33 +46,8 @@ class FFMPEGExecutor {
 	 * Arguments for the executable.
 	 */
 	private final ArrayList<String> args = new ArrayList<String>();
-
-	/**
-	 * The process representing the ffmpeg execution.
-	 */
-	private Process ffmpeg = null;
-
-	/**
-	 * A process killer to kill the ffmpeg process with a shutdown hook, useful
-	 * if the jvm execution is shutted down during an ongoing attributes
-	 * process.
-	 */
-	private ProcessKiller ffmpegKiller = null;
-
-	/**
-	 * A stream reading from the ffmpeg process standard output channel.
-	 */
-	private InputStream inputStream = null;
-
-	/**
-	 * A stream writing in the ffmpeg process standard input channel.
-	 */
-	private OutputStream outputStream = null;
-
-	/**
-	 * A stream reading from the ffmpeg process standard error channel.
-	 */
-	private InputStream errorStream = null;
+	private final ArrayList<Boolean> argIsFile = new ArrayList<Boolean>();
+	
 
 	/**
 	 * It build the executor.
@@ -88,6 +67,16 @@ class FFMPEGExecutor {
 	 */
 	public void addArgument(String arg) {
 		args.add(arg);
+		argIsFile.add(false);
+	}
+	
+	/**
+	 * Add a file to the ffmpeg executable call.
+	 * @param arg
+	 */
+	public void addFileArgument(String arg){
+		args.add(arg);
+		argIsFile.add(true);
 	}
 
 	/**
@@ -96,129 +85,35 @@ class FFMPEGExecutor {
 	 * @throws IOException
 	 *             If the process call fails.
 	 */
-	public void execute() throws IOException {
-		int argsSize = args.size();
-		String[] cmd = null;
-		int offset = 0;
-		String os = System.getProperty("os.name").toLowerCase();
-
-		if (ffmpegExecutablePath.equals("ffmpeg")) {
-			if (os.contains("windows")) {
-				offset = 3;
-				cmd = new String[offset];
-				cmd[0] = "cmd.exe";
-				cmd[1] = "/C";
-				cmd[2] = "ffmpeg";
-			} else if (os.contains("linux") || os.contains("mac")) {
-				offset = 3;
-				cmd = new String[offset];
-				cmd[0] = "bash";
-				cmd[1] = "-c";
-				cmd[2] = "ffmpeg";
-			}
-		} else {
-			offset = 1;
-			cmd = new String[argsSize + offset];
-			cmd[0] = ffmpegExecutablePath;
-		}
-
-		for (int i = 0; i < argsSize; i++) {
-			if (ffmpegExecutablePath.equals("ffmpeg")) {
-				String argument = args.get(i);
-				if (os.contains("linux") || os.contains("mac")) {
-					argument = argument.replace(" ", "\\ ");
-				} else if (os.contains("windows")) {
-					argument = "\"" + argument + "\"";
-				}
-				cmd[2] = cmd[2] + " " + argument;
+	public String execute(int expectedExitValue) throws IOException {
+		CommandLine cmdLine = new CommandLine(ffmpegExecutablePath);
+		
+		int fileNumber=0;
+		Map<String,File> map = new HashMap<String,File>();
+		for (int i = 0 ;i<args.size();i++) {
+			final String arg = args.get(i);
+			final Boolean isFile = argIsFile.get(i);
+			if(isFile){
+				String key = "file" + fileNumber;
+				map.put(key, new File(arg));
+				cmdLine.addArgument("${" + key + "}",false);
+				fileNumber++;
 			} else {
-				cmd[i + offset] = args.get(i);
+				cmdLine.addArgument(arg);
 			}
-		}
-		ProcessBuilder pb = new ProcessBuilder(cmd);
-
-		String command = "";
-		for (String element : cmd) {
-			command = command + " " + element;
-		}
-		LOG.warning("Executing " + command);
-
-		ffmpeg = pb.start();
-
-		Runtime runtime = Runtime.getRuntime();
-		// ffmpeg = runtime.exec(cmd);
-		ffmpegKiller = new ProcessKiller(ffmpeg);
-
-		runtime.addShutdownHook(ffmpegKiller);
-		inputStream = ffmpeg.getInputStream();
-		outputStream = ffmpeg.getOutputStream();
-		errorStream = ffmpeg.getErrorStream();
+		}		
+		cmdLine.setSubstitutionMap(map);
+		System.out.println("execute: " + cmdLine);
+		
+		DefaultExecutor executor = new DefaultExecutor();
+		//5minutes wait
+		ExecuteWatchdog watchdog = new ExecuteWatchdog(60 * 1000 * 5);
+		executor.setWatchdog(watchdog);
+		ByteArrayOutputStream out =  new ByteArrayOutputStream();
+		executor.setStreamHandler(new PumpStreamHandler(out));
+		int[] exitValues = {0,1};
+		executor.setExitValues(exitValues);
+		executor.execute(cmdLine);
+		return new String(out.toByteArray(), "UTF-8");		
 	}
-
-	/**
-	 * Returns a stream reading from the ffmpeg process standard output channel.
-	 * 
-	 * @return A stream reading from the ffmpeg process standard output channel.
-	 */
-	public InputStream getInputStream() {
-		return inputStream;
-	}
-
-	/**
-	 * Returns a stream writing in the ffmpeg process standard input channel.
-	 * 
-	 * @return A stream writing in the ffmpeg process standard input channel.
-	 */
-	public OutputStream getOutputStream() {
-		return outputStream;
-	}
-
-	/**
-	 * Returns a stream reading from the ffmpeg process standard error channel.
-	 * 
-	 * @return A stream reading from the ffmpeg process standard error channel.
-	 */
-	public InputStream getErrorStream() {
-		return errorStream;
-	}
-
-	/**
-	 * If there's a ffmpeg execution in progress, it kills it.
-	 */
-	public void destroy() {
-		if (inputStream != null) {
-			try {
-				inputStream.close();
-			} catch (Throwable t) {
-				;
-			}
-			inputStream = null;
-		}
-		if (outputStream != null) {
-			try {
-				outputStream.close();
-			} catch (Throwable t) {
-				;
-			}
-			outputStream = null;
-		}
-		if (errorStream != null) {
-			try {
-				errorStream.close();
-			} catch (Throwable t) {
-				;
-			}
-			errorStream = null;
-		}
-		if (ffmpeg != null) {
-			ffmpeg.destroy();
-			ffmpeg = null;
-		}
-		if (ffmpegKiller != null) {
-			Runtime runtime = Runtime.getRuntime();
-			runtime.removeShutdownHook(ffmpegKiller);
-			ffmpegKiller = null;
-		}
-	}
-
 }
