@@ -290,7 +290,7 @@ public class Encoder {
 			long sourceDuration = getInfo(source).getDuration();
 			long targetDuration = getInfo(target).getDuration();
 			
-			if (targetDuration != -1 && Math.abs(sourceDuration - targetDuration) > 250) {
+			if (targetDuration != -1 && Math.abs(sourceDuration - targetDuration) > 2000) {
 				throw new EncoderException(
 						String.format(
 								"Source and target should have similar duration (source %s duration: %s ms, target %s duration: %s ms).",

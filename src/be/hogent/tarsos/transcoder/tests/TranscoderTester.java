@@ -96,6 +96,14 @@ public class TranscoderTester {
 			}
 		}
 	}
+	
+	@Test
+	public void testWMA() throws EncoderException{
+		DefaultAttributes target = DefaultAttributes.WAV_PCM_S16LE_MONO_44KHZ;
+		String inputFile = "/media/share/olmo/Ivor Darreg/Detwelvulate/19 40 Tones per Octave - FM Timbres, Chimes and Bells.wma";
+		String outputFile = "/tmp/out.wav" + target.getAttributes().getFormat();
+		Transcoder.transcode(inputFile, outputFile, target);
+	}
 
 	/**
 	 * Delete all generated test files.
@@ -108,5 +116,4 @@ public class TranscoderTester {
 			}
 		}
 	}
-
 }

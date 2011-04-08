@@ -114,6 +114,6 @@ class FFMPEGExecutor {
 		int[] exitValues = {0,1};
 		executor.setExitValues(exitValues);
 		executor.execute(cmdLine);
-		return new String(out.toByteArray(), "UTF-8");		
+		return out.toString();		
 	}
 }
