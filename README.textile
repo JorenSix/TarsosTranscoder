@@ -20,12 +20,12 @@ h2. Getting Started
 If you have "Apache Ant":http://ant.apache.org/ and "git":http://git-scm.com/ installed
  on your system the following commands get you started quickly:
 
-<code><pre>git clone https://JorenSix@github.com/JorenSix/TarsosTranscoder.git
+<pre><code>git clone https://JorenSix@github.com/JorenSix/TarsosTranscoder.git
 cd TarsosTranscoder/build
 ant #Compiles and builds the core TarsosTranscoder library
 ant javadoc #Creates the javadoc documentation in TarsosTranscoder/doc
 java -jar tarsos_transcoder-1.0.jar ../audio/input/tone/tone_10s.wav test.flac FLAC_MONO_44KHZ #Test wav to flac transcoding
-</pre></code>
+</code></pre>
 
 If you want to use the transcoder from within Java you need to call Transcoder. It is as simple as:
 
