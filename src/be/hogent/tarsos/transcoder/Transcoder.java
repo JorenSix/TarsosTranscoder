@@ -144,6 +144,7 @@ public class Transcoder {
 	 * 
 	 * @param target
 	 *            the path to the transcoded file or file to transcode
+	 * @param targetEncoding The target encoding attributes.
 	 * @param channels
 	 *            Defines the number of channels the transcoded file should
 	 *            have.
@@ -214,29 +215,35 @@ public class Transcoder {
 	public static void main(String args[]) {
 		if (args.length != 3) {
 			printHelp();
-		}
-		File inputFile = new File(args[0]);
-		File outputFile = new File(args[1]);
-
-		DefaultAttributes encodingAttributes = null;
-		try {
-			encodingAttributes = DefaultAttributes.valueOf(args[2]);
-		} catch (IllegalArgumentException e) {
-			System.err.println("Please make sure " + args[2] + " is a correct value\n");
-			printHelp();
-		}
-
-		if (inputFile.exists() && inputFile.canRead() && encodingAttributes != null) {
-			try {
-				transcode(inputFile, outputFile, encodingAttributes);
-			} catch (EncoderException e) {
-				System.err.println("Transcoding error: make sure input " + inputFile + " is an audio file.");
-			}
 		} else {
-			System.err.println("Make sure input " + inputFile + " is readable and output " + outputFile
-					+ " writable. Also check encoding attributes: " + args[2]);
-			System.out.println();
-			printHelp();
+			File inputFile = new File(args[0]);
+			File outputFile = new File(args[1]);
+
+			DefaultAttributes encodingAttributes = null;
+			try {
+				encodingAttributes = DefaultAttributes.valueOf(args[2]);
+			} catch (IllegalArgumentException e) {
+				System.err.println("Please make sure " + args[2]
+						+ " is a correct value\n");
+				printHelp();
+			}
+
+			if (inputFile.exists() && inputFile.canRead()
+					&& encodingAttributes != null) {
+				try {
+					transcode(inputFile, outputFile, encodingAttributes);
+				} catch (EncoderException e) {
+					System.err.println("Transcoding error: make sure input "
+							+ inputFile + " is an audio file.");
+				}
+			} else {
+				System.err.println("Make sure input " + inputFile
+						+ " is readable and output " + outputFile
+						+ " writable. Also check encoding attributes: "
+						+ args[2]);
+				System.out.println();
+				printHelp();
+			}
 		}
 	}
 

@@ -64,7 +64,7 @@ public abstract class FFMPEGLocator {
 	/**
 	 * Copies a file bundled in the package to the supplied destination.
 	 * 
-	 * @param path
+	 * @param resource
 	 *            The name of the bundled file.
 	 * @param dest
 	 *            The destination.

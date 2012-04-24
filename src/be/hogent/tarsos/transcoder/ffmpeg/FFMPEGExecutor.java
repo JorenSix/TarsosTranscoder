@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -36,6 +37,11 @@ import org.apache.commons.exec.PumpStreamHandler;
  * @author Carlo Pelliccia
  */
 class FFMPEGExecutor {
+	
+	/**
+	 * Log messages.
+	 */
+	private static final Logger LOG = Logger.getLogger(FFMPEGExecutor.class.getName());
 
 	/**
 	 * The path of the ffmpeg executable.
@@ -82,10 +88,12 @@ class FFMPEGExecutor {
 	/**
 	 * Executes the ffmpeg process with the previous given arguments.
 	 * 
+	 * @return The standard output of the child process.
+	 * 
 	 * @throws IOException
 	 *             If the process call fails.
 	 */
-	public String execute(int expectedExitValue) throws IOException {
+	public String execute() throws IOException {
 		CommandLine cmdLine = new CommandLine(ffmpegExecutablePath);
 		
 		int fileNumber=0;
@@ -103,8 +111,7 @@ class FFMPEGExecutor {
 			}
 		}		
 		cmdLine.setSubstitutionMap(map);
-		System.out.println("execute: " + cmdLine);
-		
+		LOG.fine("Execute: " + cmdLine);		
 		DefaultExecutor executor = new DefaultExecutor();
 		//5minutes wait
 		ExecuteWatchdog watchdog = new ExecuteWatchdog(60 * 1000 * 5);

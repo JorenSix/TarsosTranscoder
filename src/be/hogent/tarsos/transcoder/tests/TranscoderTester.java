@@ -101,8 +101,17 @@ public class TranscoderTester {
 	public void testWMA() throws EncoderException{
 		DefaultAttributes target = DefaultAttributes.WAV_PCM_S16LE_MONO_44KHZ;
 		String inputFile = "/media/share/olmo/Ivor Darreg/Detwelvulate/19 40 Tones per Octave - FM Timbres, Chimes and Bells.wma";
-		String outputFile = "/tmp/out.wav" + target.getAttributes().getFormat();
+		String outputFile = "/tmp/out." + target.getAttributes().getFormat();
 		Transcoder.transcode(inputFile, outputFile, target);
+	}
+	
+	@Test
+	public void testFlac() throws EncoderException{
+		DefaultAttributes target = DefaultAttributes.WAV_PCM_S16LE_MONO_44KHZ;
+		String inputFile = "/home/joren/Music/Fred Hersch & Bill Frisell/(1999) Songs We Know/10. Wave.flac";
+		String outputFile = "/tmp/out." + target.getAttributes().getFormat();
+		Transcoder.transcode(inputFile, outputFile, target);
+		assertTrue(new File(outputFile).exists());
 	}
 
 	/**

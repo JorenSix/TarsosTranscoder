@@ -102,7 +102,7 @@ public class Encoder {
 		ffmpeg.addArgument("-i");
 		ffmpeg.addFileArgument(source.getAbsolutePath());
 		try {
-			String out = ffmpeg.execute(1);
+			String out = ffmpeg.execute();
 			return parseAudioAttributes(source, out);
 		} catch (IOException e) {
 			throw new EncoderException(e);
@@ -276,7 +276,7 @@ public class Encoder {
 		ffmpeg.addArgument("-y");
 		ffmpeg.addFileArgument(target.getAbsolutePath());
 		try {
-			String out = ffmpeg.execute(0);
+			String out = ffmpeg.execute();
 			LOG.fine(out);
 		} catch (IOException e) {
 			throw new EncoderException(e);
@@ -290,7 +290,7 @@ public class Encoder {
 			long sourceDuration = getInfo(source).getDuration();
 			long targetDuration = getInfo(target).getDuration();
 			
-			if (targetDuration != -1 && Math.abs(sourceDuration - targetDuration) > 2000) {
+			if (targetDuration > 0 && sourceDuration > 0 && Math.abs(sourceDuration - targetDuration) > 3000) {
 				throw new EncoderException(
 						String.format(
 								"Source and target should have similar duration (source %s duration: %s ms, target %s duration: %s ms).",

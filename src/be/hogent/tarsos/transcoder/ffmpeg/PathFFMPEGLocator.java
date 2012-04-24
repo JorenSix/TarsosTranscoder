@@ -29,7 +29,7 @@ public final class PathFFMPEGLocator extends FFMPEGLocator {
 			FFMPEGExecutor executor = new FFMPEGExecutor("ffmpeg");
 			executor.addArgument("-version");
 			try {
-				String out = executor.execute(0);				
+				String out = executor.execute();				
 				Pattern versionPattern = Pattern.compile(".*Version.*", Pattern.CASE_INSENSITIVE
 						| Pattern.MULTILINE | Pattern.UNIX_LINES);
 				Matcher versionMatcher = versionPattern.matcher(out);

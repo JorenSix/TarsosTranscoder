@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="tarsos_transcoder_library" name="Create TarsosTranscoder jar library">
+
+	<!-- Configuration -->
+	<property name="version"   value="1.0"/>
+	<property name="built_by"  value="${user.name}"/>
+	<property name="junit_jar" value="../lib/junit.jar"/>
+	<property name="commons-exec_jar" value="../lib/commons-exec-1.1.jar"/>
+
+	<!-- run the ant timestamp task -->
+	<tstamp/>
+
+	<!-- Compile the source files -->
+	<target name="compile" description="The compile task" >
+		<mkdir dir="../bin" />
+		<javac srcdir="../src" destdir="../bin" classpath="${junit_jar}:${commons-exec_jar}" />
+
+		<!-- copy all needed resources to bin dir -->
+		<copy todir="../bin/be/hogent/tarsos/transcoder/resources">
+			<fileset dir="../src/be/hogent/tarsos/transcoder/resources" />
+		</copy>
+	</target>
+
+	<!-- Clean the build directory -->
+	<target name="clean" description="Clean the build directory">
+		<delete dir="../bin" />
+	</target>
+
+	<!-- Build the TarsosTranscoder library with included source files -->
+	<target name="tarsos_transcoder_library" depends="compile" description="Build the TarsosTranscoder library with included source files">
+		<jar destfile="../build/tarsos_transcoder-${version}.jar" filesetmanifest="mergewithoutmain" duplicate="preserve">
+			<manifest>
+				<attribute name="Main-Class" value="be.hogent.tarsos.transcoder.Transcoder"/>
+				<attribute name="Implementation-Version" value="${version}-${DSTAMP}"/>
+				<attribute name="Built-By" value="${built_by}"/>
+				<attribute name="Created-By" value="${built_by}"/>
+				<attribute name="Built-Date" value="${TODAY}"/>
+			</manifest>
+
+			<!-- TarsosTranscoder compiled files -->
+			<fileset dir="../bin"/>
+			
+			<!-- Include external library -->
+			<zipfileset excludes="META-INF/*.SF" src="${commons-exec_jar}"/>
+
+			<!-- include source files -->
+			<fileset dir="../src">
+				<include name="**/*.java"/>
+			</fileset>
+		</jar>
+	</target>
+
+	<!-- Build the TarsosTranscoder library without included source files -->
+	<target name="tarsos_transcoder_library_bin" depends="compile" description="Build the TarsosTranscoder library without included source files">
+		<jar destfile="../build/tarsos_transcoder-${version}-bin.jar" filesetmanifest="mergewithoutmain" duplicate="preserve">
+			<manifest>
+				<attribute name="Main-Class" value="be.hogent.tarsos.transcoder.Transcoder" />
+				<attribute name="Implementation-Version" value="${version}-${DSTAMP}" />
+				<attribute name="Built-By" value="${built_by}" />
+				<attribute name="Created-By" value="${built_by}" />
+				<attribute name="Built-Date" value="${TODAY}" />
+			</manifest>
+
+			<!-- TarsosTranscoder -->
+			<fileset dir="../bin" />
+			<zipfileset excludes="META-INF/*.SF" src="${commons-exec_jar}" />
+		</jar>
+	</target>
+
+	<!-- Build the TarsosTranscoder library documentation -->
+	<target name="javadoc" description="Build the TarsosTranscoder library documentation">
+		<javadoc access="public" author="true" classpath="${junit_jar}:${commons-exec_jar}na" 
+			destdir="../doc" 
+			doctitle="Tarsos Transcoder API ${version}-${DSTAMP}" 
+			nodeprecated="false" 
+			nodeprecatedlist="false" 
+			noindex="false" 
+			nonavbar="false" 
+			notree="false" 
+			packagenames="be.hogent.tarsos.transcoder" 
+			source="1.6" 
+			sourcepath="../src" 
+			splitindex="true" 
+			use="true" version="true"/>
+	</target>
+</project>
