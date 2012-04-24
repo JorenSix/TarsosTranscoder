@@ -69,7 +69,7 @@
 
 	<!-- Build the TarsosTranscoder library documentation -->
 	<target name="javadoc" description="Build the TarsosTranscoder library documentation">
-		<javadoc access="public" author="true" classpath="${junit_jar}:${commons-exec_jar}na" 
+		<javadoc access="public" author="true" classpath="${junit_jar}:${commons-exec_jar}" 
 			destdir="../doc" 
 			doctitle="Tarsos Transcoder API ${version}-${DSTAMP}" 
 			nodeprecated="false" 
