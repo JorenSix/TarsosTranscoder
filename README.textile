@@ -4,21 +4,13 @@ Tarsos Transcoder is a library to transcode audio with JAVA.
 
 Downloads and more info on http://tarsos.0110.be/tag/TarsosTranscoder
 
-It uses (platform dependent) "FFmpeg":http://ffmpeg.org/
-binaries in the background. It is a fork of JAVE (Java Audio and Video Encoder) 
-by Carlo Pelliccia (www.sauronsoftware.it).
+It uses (platform dependent) "FFmpeg":http://ffmpeg.org/ binaries in the background. It is a fork of JAVE (Java Audio and Video Encoder) by Carlo Pelliccia (www.sauronsoftware.it).
 
-Tarsos Transcoder focuses only on audio and it is compatible 
-with more, and more recent FFmpeg binaries and it less dependent on 
-text output of the different binaries. The interface is also 
-simplified. It falls back to use the ffmpeg binary in the system path,
-if one is present, therefore it supports platforms for which no binary
-is provided within the release.
+Tarsos Transcoder focuses only on audio and it is compatible with more, and more recent FFmpeg binaries and it less dependent on text output of the different binaries. The interface is also simplified. It falls back to use the ffmpeg binary in the system path, if one is present, therefore it supports platforms for which no binary is provided within the release.
 
 h2. Getting Started
 
-If you have "Apache Ant":http://ant.apache.org/ and "git":http://git-scm.com/ installed
- on your system the following commands get you started quickly:
+If you have "Apache Ant":http://ant.apache.org/ and "git":http://git-scm.com/ installed  on your system the following commands get you started quickly:
 
 <pre><code>git clone https://JorenSix@github.com/JorenSix/TarsosTranscoder.git
 cd TarsosTranscoder/build
@@ -35,10 +27,7 @@ FFmpeg can encode to a lot of audio formats and can decode even more.
 
 h2. Inner workings
 
-Tarsos Transcoder tries to find an FFmpeg binary in the path of the system.
-If it does not find one it tries to copy a binary for the current platform.
-Tarsos Transcoder contains three binaries: one for MAC OS X, one for Linux
-(x86) and one for windows. Tarsos Transcoder has been tested on:
+Tarsos Transcoder tries to find an FFmpeg binary in the path of the system. If it does not find one it tries to copy a binary for the current platform. Tarsos Transcoder contains three binaries: one for MAC OS X, one for Linux (x86) and one for windows. Tarsos Transcoder has been tested on:
 
 * MAC OS X 10.6
 * Windows 7 
@@ -49,13 +38,9 @@ It will probably work most of the time.
 
 h2. Alternative Binaries
 
-If the TarsosTranscoder does not include binaries for you platform, install ffmpeg 
-and add the ffmpeg executable to your system path. It will be found and used by
-TarsosTranscoder automatically. 
+If the TarsosTranscoder does not include binaries for you platform, install ffmpeg and add the ffmpeg executable to your system path. It will be found and used by TarsosTranscoder automatically. 
 
-Alternatively, providing binaries for your (unsupported) platform can be done by 
-implementing FFMPEGLocator. The PickMe method should yield true on your platform
-and copy e.g. an FFmpeg binary to a temporary directory. 
+Alternatively, providing binaries for your (unsupported) platform can be done by implementing FFMPEGLocator. The PickMe method should yield true on your platform and copy e.g. an FFmpeg binary to a temporary directory. 
 
 h2. Lisence
 
@@ -67,17 +52,6 @@ JAVE (Java Audio and Video Encoder) by Carlo Pelliccia - www.sauronsoftware.it
 
 "FFmpeg":http://www.ffmpeg.org: this uses libraries from the FFmpeg project under the LGPLv2.1
 
-This product includes software developed by "The Apache Software Foundation":http://www.apache.org/. 
-It uses the Apache Commons Exec library, licensed under "the Apache License Version 2.0":http://commons.apache.org/exec/license.html
+This product includes software developed by "The Apache Software Foundation":http://www.apache.org/. It uses the Apache Commons Exec library, licensed under "the Apache License Version 2.0":http://commons.apache.org/exec/license.html
 
-TarsosTranscoder is used by "Tarsos":http://tarsos.0110.be, Tarsos is developed at 
-University College Ghent, Faculty of Music
-
-
-
-
-
-
- 
-
-  
+TarsosTranscoder is used by "Tarsos":http://tarsos.0110.be, Tarsos is developed at University College Ghent, Faculty of Music
