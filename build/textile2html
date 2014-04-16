@@ -1,0 +1,29 @@
+#!/usr/bin/ruby
+#########################################
+#
+#  textile2html
+#
+#########################################
+#
+# Converts an input textile file
+# to html. The first argument is input, 
+# the second the output file. E.g.:
+#
+# textile2html in.textile out.html
+#
+#########################################
+
+require 'rubygems'
+require 'RedCloth'
+
+input_file = ARGV[0]
+output_file = ARGV[1]
+
+file = File.open(input_file, "r")
+contents = file.read
+file.close
+
+html = RedCloth.new(contents).to_html
+
+File.open(output_file, 'w') {|f| f.write(html) }
+

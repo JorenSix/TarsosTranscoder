@@ -25,11 +25,11 @@ public class TranscoderTester {
 
 	@Test
 	public void testTranscoding() throws EncoderException {
+		
 		List<DefaultAttributes> list = new ArrayList<DefaultAttributes>();
 		list.add(DefaultAttributes.WAV_PCM_S16LE_MONO_44KHZ);
 		list.add(DefaultAttributes.WAV_PCM_S16LE_STEREO_44KHZ);
-		// Transcode INPUT_FILE to and from every encoding defined by DEFAULT
-		// ATTRIBUTES
+		
 		for (DefaultAttributes target : list) {
 			// Transcode the input file
 			String outputFile = "audio/output/out_" + target.name() + "."
@@ -45,7 +45,7 @@ public class TranscoderTester {
 		// Encode some other formats.
 		for (File source : new File("audio/input/formats/").listFiles()) {
 			if (source.isFile()) {
-				for (DefaultAttributes targetEncoding : DefaultAttributes.values()) {
+				for (DefaultAttributes targetEncoding : list) {
 					String targetName = "audio/output/" + source.getName() + "_" + targetEncoding.name()
 							+ "." + targetEncoding.getAttributes().getFormat();
 					File target = new File(targetName);
@@ -53,6 +53,7 @@ public class TranscoderTester {
 				}
 			}
 		}
+		
 	}
 
 	/**
@@ -78,7 +79,6 @@ public class TranscoderTester {
 	 */
 	@Test
 	public void testGetInfo() {
-
 		for (File file : new File("audio/input/formats/").listFiles()) {
 			if (file.isFile()) {
 				Attributes attr = Transcoder.getInfo(file.getAbsolutePath());
@@ -97,22 +97,6 @@ public class TranscoderTester {
 		}
 	}
 	
-	@Test
-	public void testWMA() throws EncoderException{
-		DefaultAttributes target = DefaultAttributes.WAV_PCM_S16LE_MONO_44KHZ;
-		String inputFile = "/media/share/olmo/Ivor Darreg/Detwelvulate/19 40 Tones per Octave - FM Timbres, Chimes and Bells.wma";
-		String outputFile = "/tmp/out." + target.getAttributes().getFormat();
-		Transcoder.transcode(inputFile, outputFile, target);
-	}
-	
-	@Test
-	public void testFlac() throws EncoderException{
-		DefaultAttributes target = DefaultAttributes.WAV_PCM_S16LE_MONO_44KHZ;
-		String inputFile = "/home/joren/Music/Fred Hersch & Bill Frisell/(1999) Songs We Know/10. Wave.flac";
-		String outputFile = "/tmp/out." + target.getAttributes().getFormat();
-		Transcoder.transcode(inputFile, outputFile, target);
-		assertTrue(new File(outputFile).exists());
-	}
 
 	/**
 	 * Delete all generated test files.
@@ -121,7 +105,7 @@ public class TranscoderTester {
 	public static void cleanOutputDirectory() {
 		for (File tempOutputFile : new File("audio/output/").listFiles()) {
 			if (tempOutputFile.isFile()) {
-				//tempOutputFile.delete();
+				tempOutputFile.delete();
 			}
 		}
 	}

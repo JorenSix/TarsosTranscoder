@@ -54,6 +54,16 @@ public enum DefaultAttributes {
 	 */
 	MP3_128KBS_STEREO_44KHZ(new Attributes("mp3", "libmp3lame", 44100, 2, 128000)),
 	/**
+	 * WAV PCM Signed 16 bit Little Endian, one channel (mono), 8000Hz sampling
+	 * rate, no volume change.
+	 */
+	WAV_PCM_S16LE_MONO_8KHZ(new Attributes("wav", "pcm_s16le", 8000, 1)),
+	/**
+	 * WAV PCM Signed 16 bit Little Endian, one channel (mono), 8000Hz sampling
+	 * rate, no volume change.
+	 */
+	WAV_PCM_S16LE_STEREO_8KHZ(new Attributes("wav", "pcm_s16le", 8000, 2)),
+	/**
 	 * WAV PCM Signed 16 bit Little Endian, one channel (mono), 22050Hz sampling
 	 * rate, no volume change.
 	 */

@@ -123,4 +123,25 @@ class FFMPEGExecutor {
 		executor.execute(cmdLine);
 		return out.toString();		
 	}
+	
+	public String toString(){
+		CommandLine cmdLine = new CommandLine(ffmpegExecutablePath);
+		
+		int fileNumber=0;
+		Map<String,File> map = new HashMap<String,File>();
+		for (int i = 0 ;i<args.size();i++) {
+			final String arg = args.get(i);
+			final Boolean isFile = argIsFile.get(i);
+			if(isFile){
+				String key = "file" + fileNumber;
+				map.put(key, new File(arg));
+				cmdLine.addArgument("${" + key + "}",false);
+				fileNumber++;
+			} else {
+				cmdLine.addArgument(arg);
+			}
+		}		
+		cmdLine.setSubstitutionMap(map);
+		return cmdLine.toString();	
+	}
 }

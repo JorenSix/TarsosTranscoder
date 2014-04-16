@@ -20,21 +20,16 @@ public class Transcoder {
 
 	private static final Logger LOG = Logger.getLogger(Transcoder.class.getName());
 
-	/**
-	 * Already added locators to encoder?
-	 */
-	private static boolean initialized = false;
 
 	/**
 	 * Adds default locators to encoder.
 	 */
 	private static void initialize() {
-		if (!initialized) {
+		if(!Encoder.hasLocators()) {
 			Encoder.addFFMPEGLocator(new WindowsFFMPEGLocator());
 			Encoder.addFFMPEGLocator(new MacFFMPEGLocator());
 			Encoder.addFFMPEGLocator(new LinuxFFMPEGLocator());
 			Encoder.addFFMPEGLocator(new PathFFMPEGLocator());
-			initialized = true;
 		}
 	}
 
