@@ -1,17 +1,50 @@
 h1. Tarsos Transcoder
 
-Tarsos Transcoder is a library to transcode audio with JAVA. It also supports 
-all kinds of streams.
+Tarsos Transcoder is a Java library that enables you to quickly play and process audio encoded as MP3, Flac, Vorbis or about any other audio format in Java. It also provides support for @http@ and other streams.
 
 Downloads can be found on the "release repository":http://0110.be/releases. Some information can also be found "here":http://0110.be/tag/TarsosTranscoder.
 
-It uses (platform dependent) "FFmpeg":http://ffmpeg.org/ binaries in the background. It is a fork of JAVE (Java Audio and Video Encoder) by Carlo Pelliccia (www.sauronsoftware.it).
-
-Tarsos Transcoder focuses only on audio and it is compatible with more, and more recent FFmpeg binaries and it less dependent on text output of the different binaries. The interface is also simplified. It falls back to use the ffmpeg binary in the system path, if one is present, therefore it supports platforms for which no binary is provided within the release.
 
 h2. Getting Started
 
-If you have "Apache Ant":http://ant.apache.org/ and "git":http://git-scm.com/ installed  on your system the following commands get you started quickly:
+
+If you want to use the an mp3 from within Java you need to call @Transcoder@. The following code converts @foo.mp3@ to a stereo wave file with 16 bits per sample (little endian) and 44.1kHz sampling rate. The resulting wav file is stored in @foo.wav@. A number of default formats are provided all transcoding operations supported by the ffmpeg binary (see below) are supported. This means you can trancode e.g. an Ogg Vorbis stereo file to flac mono. Transcoding is only supported on files and not on streams.
+
+<code>Transcoder.transcode("foo.mp3","foo.wav",DefaultAttributes.WAV_PCM_S16LE_STEREO_44KHZ);</code>
+
+To stream, decode, resample and downmix audio from about any source (streams and files) can be done with the following code. The code decodes a stereo MP3 http stream on the fly to a single channel PCM wav. The <code>AudioInputStream</code> in the requested <code>AudioFormat</code> can be used for any purpose, but here the result is played to the speakers.
+
+<pre><code>
+//The source http stream
+String source = "http://mp3.streampower.be/stubru-high.mp3";
+
+//Set the transcoding to WAV PCM, 16bits LE, 16789Hz (or any other sample rate). 
+Attributes attributes = DefaultAttributes.WAV_PCM_S16LE_MONO_44KHZ.getAttributes();
+attributes.setSamplingRate(16789);
+		
+		
+//Stream the same file with on the fly decoding:		
+AudioInputStream streamedAudioInputStream = Streamer.stream(source, attributes);
+AudioFormat audioFormat = Streamer.streamAudioFormat(attributes);
+		
+byte[] streamBuffer = new byte[1024];
+		
+DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
+line.open(audioFormat);
+line.start();
+				
+while (streamedAudioInputStream.available() > streamBuffer.length){
+	int bytesRead = streamedAudioInputStream.read(streamBuffer);
+	int bytesWrote = line.write(streamBuffer, 0, streamBuffer.length);
+	assert bytesRead == bytesWrote;
+}
+line.close();
+streamedAudioInputStream.close();
+</code>
+</pre>
+
+To build TarsosTrancoder yourself, you need to have "Apache Ant":http://ant.apache.org/ and "git":http://git-scm.com/ installed on your system. The following commands build and test library:
 
 <pre><code>git clone https://JorenSix@github.com/JorenSix/TarsosTranscoder.git
 cd TarsosTranscoder/build
@@ -20,21 +53,6 @@ ant javadoc #Creates the javadoc documentation in TarsosTranscoder/doc
 java -jar tarsos_transcoder-1.0.jar ../audio/input/tone/tone_10s.wav test.flac FLAC_MONO_44KHZ #Test wav to flac transcoding
 </code></pre>
 
-If you want to use the transcoder from within Java you need to call Transcoder. It is as simple as:
-
-<code>Transcoder.transcode("foo.mp3","foo.wav",DefaultAttributes.WAV_PCM_S16LE_STEREO_44KHZ);</code>
-
-To stream, decode, resample and downmix audio from about any source the following
-calls suffice. The code yields an <code>AudioInputStream</code> in the requested <code>AudioFormat</code>, which can then be used for your purposes. 
-
-<pre><code>
-String radioStream = "http://mp3.streampower.be/stubru-high.mp3";
-AudioInputStream stream = Streamer.stream(radioStream,DefaultAttributes.WAV_PCM_S16LE_STEREO_44KHZ);
-AudioFormat streamFormat = Streamer.streamAudioFormat(DefaultAttributes.WAV_PCM_S16LE_STEREO_44KHZ);
-</code>
-</pre>
-
-FFmpeg can encode to a lot of audio formats and can decode even more.
 
 h2. Inner workings
 
@@ -45,13 +63,23 @@ Tarsos Transcoder tries to find an FFmpeg binary in the path of the system. If i
 * Ubuntu linux 10.10 ARM 
 * Ubuntu Linux 10.04 x86_64
 
-It will probably work most of the time.
+It will __probably work__ most of the time.
+
+It is a heavily modified fork of JAVE (Java Audio and Video Encoder) by Carlo Pelliccia (www.sauronsoftware.it). The main differences are that Tarsos Transcoder focuses only on audio and it is compatible with more, and more recent FFmpeg binaries and it less dependent on text output of the different binaries. The interface is also simplified. It falls back to use the ffmpeg binary in the system path, if one is present, therefore it supports platforms for which no binary is provided within the release.
 
 h2. Alternative Binaries
 
 If the TarsosTranscoder does not include binaries for you platform, install ffmpeg and add the ffmpeg executable to your system path. It will be found and used by TarsosTranscoder automatically. 
 
-Alternatively, providing binaries for your (unsupported) platform can be done by implementing  <code>FFMPEGLocator</code>. The <code>PickMe()</code> method should yield true on your platform and copy e.g. an FFmpeg binary to a temporary directory. 
+Alternatively, providing binaries for your (unsupported) platform can be done by implementing  <code>FFMPEGLocator</code>. The <code>PickMe()</code> method should yield true on your platform and copy e.g. an FFmpeg binary to a temporary directory.
+
+h2. Why TarsosTranscoder?
+
+Although the Java audio system has a nice plug-in system (service provider interface) to add support for various audio formats, the state of pure Java audio decoders that are available could be improved. There are pure Java implementations to decode "Flac":http://jflac.sourceforge.net, "Ogg Vorbis":http://www.jcraft.com/jorbis/ and "MP3":http://www.javazoom.net/mp3spi. Together with the "Tritonus":http://www.tritonus.org/ libraries these can decode audio in the respective formats.
+
+Unfortunately the Java libraries are not (well) maintained. The Tritonus libraries for example have not seen an update in the last decade. The implementation of the decoders are also incomplete. The MP3 library has problems with files longer than half an hour and is not able to handle corrupted MP3's. Jorbis does not support 48kHz files with 32bit floating point samples (Q5). Jflac has troubles with multi-channel (3 or more) files, although the flac specification supports up to 8 channels. Support for http-streaming and decoding also varies for each library. Downmixing and resampling in PCM audio can be done with the Tritonus libraries but is again of limited use, since it can only be used for Jorbis and the MP3 decoder.
+
+Ideally a system should be able to decode audio in about any format, from any source (also video container formats like avi) to PCM. A system should also be able to resample and downmix on the fly to any sampling rate. Preferably the system should be robust to with corrupted audio samples. When leaving the Java-ecosystem the actively developed "ffmpeg project":https://www.ffmpeg.org/ seems to offer these capabilities. TarsosTranscoder offers an easy way to call and use this library from within Java without having to worry about installing ffmpeg.
 
 h2. License
 
@@ -65,4 +93,4 @@ JAVE (Java Audio and Video Encoder) by Carlo Pelliccia - www.sauronsoftware.it
 
 This product includes software developed by "The Apache Software Foundation":http://www.apache.org/. It uses the Apache Commons Exec library, licensed under "the Apache License Version 2.0":http://commons.apache.org/exec/license.html
 
-TarsosTranscoder is used by "Tarsos":http://tarsos.0110.be, Tarsos is developed at University College Ghent, Faculty of Music and University Ghent, IPEM
+TarsosTranscoder is used by "Tarsos":http://tarsos.0110.be, Tarsos is developed at University College Ghent and the Faculty of Music and University Ghent, IPEM

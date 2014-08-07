@@ -1,7 +1,15 @@
 package be.hogent.tarsos.transcoder;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Logger;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 
 import be.hogent.tarsos.transcoder.ffmpeg.Encoder;
 import be.hogent.tarsos.transcoder.ffmpeg.EncoderException;
@@ -206,9 +214,42 @@ public class Transcoder {
 		}
 		return info;
 	}
+	
+	public static void play(String source) throws EncoderException, LineUnavailableException, IOException{
+		SourceDataLine line;
+		DataLine.Info info;
+				
+		//Set the transcoding to WAV PCM, 16bits LE
+		Attributes attributes = DefaultAttributes.WAV_PCM_S16LE_STEREO_44KHZ.getAttributes();
+		
+		//Stream the same file with on the fly decoding:		
+		AudioInputStream streamedAudioInputStream = Streamer.stream(source, attributes);
+		AudioFormat audioFormat = Streamer.streamAudioFormat(attributes);
+		
+		byte[] streamBuffer = new byte[1024];
+		
+		info = new DataLine.Info(SourceDataLine.class, audioFormat);
+		line = (SourceDataLine) AudioSystem.getLine(info);
+		line.open(audioFormat);
+		line.start();
+				
+		while (streamedAudioInputStream.available() > streamBuffer.length){
+			int bytesRead = streamedAudioInputStream.read(streamBuffer);
+			int bytesWrote = line.write(streamBuffer, 0, streamBuffer.length);
+			assert bytesRead == bytesWrote;
+		}
+		line.close();
+		streamedAudioInputStream.close();
+	}
 
 	public static void main(String args[]) {
-		if (args.length != 3) {
+		if( args.length ==2 && args[0].equalsIgnoreCase("play")){
+			try {
+				play(args[1]);
+			} catch (Exception e) {
+				System.out.println("Error while playing the stream:" + e.getMessage());
+			}
+		}else if (args.length != 3) {
 			printHelp();
 		} else {
 			File inputFile = new File(args[0]);

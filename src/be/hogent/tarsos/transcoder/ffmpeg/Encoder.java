@@ -18,11 +18,8 @@
  */
 package be.hogent.tarsos.transcoder.ffmpeg;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.ProcessBuilder.Redirect;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -32,7 +29,6 @@ import java.util.regex.Pattern;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 
 import be.hogent.tarsos.transcoder.Attributes;
 
@@ -243,52 +239,18 @@ public class Encoder {
 	 *             If a problems occurs during the attributes process.
 	 */
 	public void encode(File source, File target, Attributes attributes) throws EncoderException {
-
 		if (attributes == null) {
 			throw new IllegalArgumentException("Audio attributes are null");
 		}
-
-		String formatAttribute = attributes.getFormat();
+		
 		target = target.getAbsoluteFile();
 		target.getParentFile().mkdirs();
-		FFMPEGExecutor ffmpeg = locator.createExecutor();
+		FFMPEGExecutor ffmpeg = construcExecutor(attributes, source.getAbsolutePath());
 
-		ffmpeg.addArgument("-i");
-		ffmpeg.addFileArgument(source.getAbsolutePath());
-
-		// no video
-		ffmpeg.addArgument("-vn");
-
-		String codec = attributes.getCodec();
-		if (codec != null) {
-			ffmpeg.addArgument("-acodec");
-			ffmpeg.addArgument(codec);
-		}
-		Integer bitRate = attributes.getBitRate();
-		if (bitRate != null) {
-			ffmpeg.addArgument("-ab");
-			ffmpeg.addArgument(String.valueOf(bitRate.intValue()));
-		}
-		Integer channels = attributes.getChannels();
-		if (channels != null) {
-			ffmpeg.addArgument("-ac");
-			ffmpeg.addArgument(String.valueOf(channels.intValue()));
-		}
-		Integer samplingRate = attributes.getSamplingRate();
-		if (samplingRate != null) {
-			ffmpeg.addArgument("-ar");
-			ffmpeg.addArgument(String.valueOf(samplingRate.intValue()));
-		}
-		Integer volume = attributes.getVolume();
-		if (volume != null) {
-			ffmpeg.addArgument("-vol");
-			ffmpeg.addArgument(String.valueOf(volume.intValue()));
-		}
-
-		ffmpeg.addArgument("-f");
-		ffmpeg.addArgument(formatAttribute);
+		//add output file
 		ffmpeg.addArgument("-y");
 		ffmpeg.addFileArgument(target.getAbsolutePath());
+		
 		try {
 			String out = ffmpeg.execute();
 			LOG.fine(out);
@@ -320,16 +282,26 @@ public class Encoder {
 			throw new IllegalArgumentException("Audio attributes are null");
 		} if(!attributes.getFormat().equalsIgnoreCase("wav")){
 			throw new IllegalArgumentException("Streaming only supports the wav format, not  " + attributes.getFormat());
-			
 		}
-
-		String formatAttribute = attributes.getFormat();
+		
+		//Create an ffmpeg executor
+		FFMPEGExecutor ffmpeg = construcExecutor(attributes, source);
+		
+		//Pipe the output to stdout
+		ffmpeg.addArgument("pipe:1");
+		
+		//The command to execute is this:
+		LOG.fine("Will pipe stream output using the following command:");
+		LOG.fine(ffmpeg.toString());
+		
+		return ffmpeg.pipe(attributes);
+	}
+	
+	private FFMPEGExecutor construcExecutor(Attributes attributes,String source){
 		FFMPEGExecutor ffmpeg = locator.createExecutor();
-
+		
 		ffmpeg.addArgument("-i");
 		ffmpeg.addArgument(source);
-		
-		// "avconv -i \"%resource%\" -vn -ar %sample_rate% -ac %channels% -sample_fmt s16 -f wav pipe:1";
 
 		// no video
 		ffmpeg.addArgument("-vn");
@@ -361,63 +333,10 @@ public class Encoder {
 		}
 
 		ffmpeg.addArgument("-f");
-		ffmpeg.addArgument(formatAttribute);
+		ffmpeg.addArgument(attributes.getFormat());
 		
-		ffmpeg.addArgument("pipe:1");
 		
-		System.out.println(ffmpeg.toString());
-		
-		String pipeEnvironment;
-		String pipeArgument;
-		File pipeLogFile;
-		int pipeBuffer;
-		
-		if(System.getProperty("os.name").indexOf("indows") > 0 ){
-			pipeEnvironment = "cmd.exe";
-			pipeArgument = "/C";
-		}else{
-			pipeEnvironment = "/bin/bash";
-			pipeArgument = "-c";
-		}
-		pipeLogFile = new File("decoder_log.txt");
-		pipeBuffer = 10000;
-		
-		AudioFormat audioFormat = getTargetAudioFormat(attributes);
-		
-		try {
-			String command = ffmpeg.toString();
-			//command = command.replace("%resource%", resource);
-			//command = command.replace("%sample_rate%", String.valueOf(targetSampleRate));
-			//command = command.replace("%channels%","1");
-			
-			ProcessBuilder pb = new ProcessBuilder(pipeEnvironment, pipeArgument , command);
-		
-			pb.redirectError(Redirect.appendTo(pipeLogFile));
-		
-			LOG.info("Starting piped decoding process for " + source );
-			final Process process = pb.start();
-			
-			InputStream stdOut = new BufferedInputStream(process.getInputStream(), pipeBuffer);
-						
-			final AudioInputStream audioStream = new AudioInputStream(stdOut, audioFormat, AudioSystem.NOT_SPECIFIED);
-			
-			new Thread(new Runnable(){
-		
-				public void run() {
-					try {
-						process.waitFor();
-						LOG.fine("Finished piped decoding process");
-					} catch (InterruptedException e) {
-						LOG.severe("Interrupted while waiting for sub process exit.");
-						e.printStackTrace();
-					}
-				}},"Decoding Pipe").start();
-			return audioStream;
-		} catch (IOException e) {
-			LOG.warning("IO exception while decoding audio via sub process." + e.getMessage() );
-			e.printStackTrace();
-		}
-		return null;
+		return ffmpeg;
 	}
 	
 	/**
