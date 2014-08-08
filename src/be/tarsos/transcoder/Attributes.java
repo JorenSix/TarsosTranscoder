@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package be.hogent.tarsos.transcoder;
+package be.tarsos.transcoder;
 
 /**
  * Attributes controlling the audio attributes process.
@@ -189,7 +189,7 @@ public class Attributes {
 
 	/**
 	 * The format name for the encoded target multimedia file. Be sure this
-	 * format is supported (see {@link Encoder#getSupportedEncodingFormats()}.
+	 * format is supported by checking your ffmpeg version.
 	 */
 	private String format = null;
 
@@ -204,7 +204,7 @@ public class Attributes {
 
 	/**
 	 * Sets the format name for the encoded target multimedia file. Be sure this
-	 * format is supported (see {@link Encoder#getSupportedEncodingFormats()}.
+	 * format is supported by checking your ffmpeg version.
 	 * 
 	 * @param format
 	 *            The format name for the encoded target multimedia file.

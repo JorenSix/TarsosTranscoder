@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package be.hogent.tarsos.transcoder.ffmpeg;
+package be.tarsos.transcoder.ffmpeg;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,7 +38,7 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
 
-import be.hogent.tarsos.transcoder.Attributes;
+import be.tarsos.transcoder.Attributes;
 
 /**
  * A ffmpeg process wrapper.

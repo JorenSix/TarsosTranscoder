@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package be.hogent.tarsos.transcoder.ffmpeg;
+package be.tarsos.transcoder.ffmpeg;
 
 /**
  * This expection is thrown if a source file format is not recognized.

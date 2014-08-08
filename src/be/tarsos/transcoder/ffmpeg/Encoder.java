@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package be.hogent.tarsos.transcoder.ffmpeg;
+package be.tarsos.transcoder.ffmpeg;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 
-import be.hogent.tarsos.transcoder.Attributes;
+import be.tarsos.transcoder.Attributes;
 
 /**
  * Main class of the package. Instances can encode audio and video streams.
@@ -80,7 +80,7 @@ public class Encoder {
 	private FFMPEGLocator locator;
 
 	/**
-	 * It builds an encoder using a {@link WindowsFFMPEGLocator} instance to
+	 * It builds an encoder using a locator instance to
 	 * locate the ffmpeg executable to use.
 	 */
 	public Encoder() {
@@ -223,10 +223,7 @@ public class Encoder {
 	 * 
 	 * @param source
 	 *            The source multimedia file. It cannot be null. Be sure this
-	 *            file can be decoded (see
-	 *            {@link Encoder#getSupportedDecodingFormats()},
-	 *            {@link Encoder#getAudioDecoders()} and
-	 *            {@link Encoder#getVideoDecoders()}).
+	 *            file can be decoded.
 	 * @param target
 	 *            The target multimedia re-encoded file. It cannot be null. If
 	 *            this file already exists, it will be overwrited.
@@ -343,8 +340,8 @@ public class Encoder {
 	 * Constructs the target audio format. The audio format is one channel
 	 * signed PCM of a given sample rate.
 	 * 
-	 * @param targetSampleRate
-	 *            The sample rate to convert to.
+	 * @param attributes
+	 *            The audio format (sample rate, format, bit depth, channels,...) to convert to.
 	 * @return The audio format after conversion.
 	 */
 	public static AudioFormat getTargetAudioFormat(Attributes attributes) {

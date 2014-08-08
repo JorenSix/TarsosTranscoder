@@ -1,4 +1,4 @@
-package be.hogent.tarsos.transcoder;
+package be.tarsos.transcoder;
 
 /**
  * A list of default encoding options. Encoding and decoding in these formats

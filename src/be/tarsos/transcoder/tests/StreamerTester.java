@@ -1,4 +1,4 @@
-package be.hogent.tarsos.transcoder.tests;
+package be.tarsos.transcoder.tests;
 
 import static org.junit.Assert.assertEquals;
 
@@ -15,18 +15,18 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.junit.Test;
 
-import be.hogent.tarsos.transcoder.Attributes;
-import be.hogent.tarsos.transcoder.DefaultAttributes;
-import be.hogent.tarsos.transcoder.Streamer;
-import be.hogent.tarsos.transcoder.Transcoder;
-import be.hogent.tarsos.transcoder.ffmpeg.EncoderException;
+import be.tarsos.transcoder.Attributes;
+import be.tarsos.transcoder.DefaultAttributes;
+import be.tarsos.transcoder.Streamer;
+import be.tarsos.transcoder.Transcoder;
+import be.tarsos.transcoder.ffmpeg.EncoderException;
 
 public class StreamerTester {
-	
+	private final static String SLASH = System.getProperty("file.separator");
 
 	@Test
 	public void testTranscodingAndStreaming() throws EncoderException, LineUnavailableException, IOException, UnsupportedAudioFileException, InterruptedException{
-		for (File file : new File("audio/input/formats/").listFiles()) {
+		for (File file : new File("audio"+SLASH+"input"+SLASH+"formats"+SLASH).listFiles()) {
 			if (file.isFile()) {
 				compareTranscodingAndStreaming(file.getAbsolutePath());
 			}
@@ -44,7 +44,7 @@ public class StreamerTester {
 		
 		//Save the transcoded file:
 		File temporaryTranscoded = File.createTempFile("temporaryTranscoded", ".wav");
-		temporaryTranscoded = new File("transcoded.wav");
+		
 		Transcoder.transcode(source, temporaryTranscoded.getAbsolutePath(), attributes);
 		AudioInputStream transcodedAudioInputStream = AudioSystem.getAudioInputStream(temporaryTranscoded);
 		

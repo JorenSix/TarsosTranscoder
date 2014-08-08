@@ -1,4 +1,4 @@
-package be.hogent.tarsos.transcoder.ffmpeg;
+package be.tarsos.transcoder.ffmpeg;
 
 import java.io.File;
 import java.io.IOException;

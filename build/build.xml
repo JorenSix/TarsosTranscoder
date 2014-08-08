@@ -2,9 +2,10 @@
 <project default="tarsos_transcoder_library" name="Create TarsosTranscoder jar library">
 
 	<!-- Configuration -->
-	<property name="version"   value="1.1"/>
+	<property name="version"   value="1.2"/>
 	<property name="built_by"  value="${user.name}"/>
-	<property name="junit_jar" value="../lib/junit.jar"/>
+	<property name="junit_jar" value="../lib/junit-4.11.jar"/>
+	<property name="hamcrest_core_jar" value="../lib/hamcrest-core-1.3.jar"/>
 	<property name="commons-exec_jar" value="../lib/commons-exec-1.1.jar"/>
 
 	<!-- run the ant timestamp task -->
@@ -13,11 +14,11 @@
 	<!-- Compile the source files -->
 	<target name="compile" description="The compile task" >
 		<mkdir dir="../bin" />
-		<javac srcdir="../src" destdir="../bin" classpath="${junit_jar}:${commons-exec_jar}" />
+		<javac srcdir="../src" destdir="../bin" classpath="${junit_jar}:${commons-exec_jar}" includeantruntime="false" />
 
 		<!-- copy all needed resources to bin dir -->
-		<copy todir="../bin/be/hogent/tarsos/transcoder/resources">
-			<fileset dir="../src/be/hogent/tarsos/transcoder/resources" />
+		<copy todir="../bin/be/tarsos/transcoder/resources">
+			<fileset dir="../src/be/tarsos/transcoder/resources" />
 		</copy>
 	</target>
 
@@ -32,7 +33,7 @@
 		<!-- With included source files -->
 		<jar destfile="../build/TarsosTranscoder-${version}.jar" filesetmanifest="mergewithoutmain" duplicate="preserve">
 			<manifest>
-				<attribute name="Main-Class" value="be.hogent.tarsos.transcoder.Transcoder"/>
+				<attribute name="Main-Class" value="be.tarsos.transcoder.Transcoder"/>
 				<attribute name="Implementation-Version" value="${version}-${DSTAMP}"/>
 				<attribute name="Built-By" value="${built_by}"/>
 				<attribute name="Created-By" value="${built_by}"/>
@@ -54,7 +55,7 @@
 		<!-- Without included source files -->
 		<jar destfile="../build/TarsosTranscoder-${version}-bin.jar" filesetmanifest="mergewithoutmain" duplicate="preserve">
 			<manifest>
-				<attribute name="Main-Class" value="be.hogent.tarsos.transcoder.Transcoder" />
+				<attribute name="Main-Class" value="be.tarsos.transcoder.Transcoder" />
 				<attribute name="Implementation-Version" value="${version}-${DSTAMP}" />
 				<attribute name="Built-By" value="${built_by}" />
 				<attribute name="Created-By" value="${built_by}" />
@@ -79,14 +80,34 @@
 			noindex="false" 
 			nonavbar="false" 
 			notree="false" 
-			packagenames="be.hogent.tarsos.transcoder" 
-			source="1.6" 
+			packagenames="be.tarsos.transcoder,be.tarsos.transcoder.ffmpeg" 
+			source="1.7" 
 			sourcepath="../src" 
 			splitindex="true" 
 			use="true" version="true"/>
 	</target>
+	
+	<!-- Test the TarsosTranscoder library -->
+	<target name="test" description="Test the library" depends="compile" >
+		<copy todir="audio">
+		  <fileset dir="../audio" />
+		</copy>
+		<junit printsummary="yes">
+		 <classpath>
+		    <pathelement location="${commons-exec_jar}"/>
+		 	<pathelement location="${junit_jar}"/>
+		 	<pathelement location="${hamcrest_core_jar}"/>
+		 	<pathelement path="../bin"/>
+		  </classpath>
+		  <formatter type="plain"/>
+		  <test name="be.tarsos.transcoder.tests.StreamerTester" outfile="test_stream_result"/>
+		  <test name="be.tarsos.transcoder.tests.TranscoderTester" outfile="test_transcoder_result"/>
+		</junit>
+		<delete dir="audio" />
+	</target>
 
-	<target name="release" depends="javadoc,tarsos_transcoder_library">
+	<!-- Prepare for release upload -->
+	<target name="release" depends="tarsos_transcoder_library,javadoc">
 		<copy todir="TarsosTranscoder-${version}-Documentation">
 			<fileset dir="../doc" />
 		</copy>

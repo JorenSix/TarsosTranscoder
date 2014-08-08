@@ -1,4 +1,4 @@
-package be.hogent.tarsos.transcoder.ffmpeg;
+package be.tarsos.transcoder.ffmpeg;
 
 /*
  * JAVE - A Java Audio/Video Encoder (based on FFMPEG)

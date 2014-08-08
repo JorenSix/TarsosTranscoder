@@ -1,4 +1,4 @@
-package be.hogent.tarsos.transcoder;
+package be.tarsos.transcoder;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,13 +11,13 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
-import be.hogent.tarsos.transcoder.ffmpeg.Encoder;
-import be.hogent.tarsos.transcoder.ffmpeg.EncoderException;
-import be.hogent.tarsos.transcoder.ffmpeg.InputFormatException;
-import be.hogent.tarsos.transcoder.ffmpeg.LinuxFFMPEGLocator;
-import be.hogent.tarsos.transcoder.ffmpeg.MacFFMPEGLocator;
-import be.hogent.tarsos.transcoder.ffmpeg.PathFFMPEGLocator;
-import be.hogent.tarsos.transcoder.ffmpeg.WindowsFFMPEGLocator;
+import be.tarsos.transcoder.ffmpeg.Encoder;
+import be.tarsos.transcoder.ffmpeg.EncoderException;
+import be.tarsos.transcoder.ffmpeg.InputFormatException;
+import be.tarsos.transcoder.ffmpeg.LinuxFFMPEGLocator;
+import be.tarsos.transcoder.ffmpeg.MacFFMPEGLocator;
+import be.tarsos.transcoder.ffmpeg.PathFFMPEGLocator;
+import be.tarsos.transcoder.ffmpeg.WindowsFFMPEGLocator;
 
 /**
  * The main interface to transcode audio.
@@ -147,12 +147,10 @@ public class Transcoder {
 	 * 
 	 * @param target
 	 *            the path to the transcoded file or file to transcode
-	 * @param targetEncoding The target encoding attributes.
-	 * @param channels
-	 *            Defines the number of channels the transcoded file should
+	 * @param targetEncoding
+	 *            The target encoding attributes. It defines the number of
+	 *            channels, format, sampling rate,... the transcoded file should
 	 *            have.
-	 * @param samplingRate
-	 *            Defines the samplingrate the transcoded file should have.
 	 * @return false if the file is already transcoded as per the requested
 	 *         parameters, false otherwise.
 	 */

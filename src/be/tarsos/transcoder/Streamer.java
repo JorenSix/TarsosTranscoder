@@ -1,14 +1,14 @@
-package be.hogent.tarsos.transcoder;
+package be.tarsos.transcoder;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 
-import be.hogent.tarsos.transcoder.ffmpeg.Encoder;
-import be.hogent.tarsos.transcoder.ffmpeg.EncoderException;
-import be.hogent.tarsos.transcoder.ffmpeg.LinuxFFMPEGLocator;
-import be.hogent.tarsos.transcoder.ffmpeg.MacFFMPEGLocator;
-import be.hogent.tarsos.transcoder.ffmpeg.PathFFMPEGLocator;
-import be.hogent.tarsos.transcoder.ffmpeg.WindowsFFMPEGLocator;
+import be.tarsos.transcoder.ffmpeg.Encoder;
+import be.tarsos.transcoder.ffmpeg.EncoderException;
+import be.tarsos.transcoder.ffmpeg.LinuxFFMPEGLocator;
+import be.tarsos.transcoder.ffmpeg.MacFFMPEGLocator;
+import be.tarsos.transcoder.ffmpeg.PathFFMPEGLocator;
+import be.tarsos.transcoder.ffmpeg.WindowsFFMPEGLocator;
 
 /**
  * The main interface to stream audio.
