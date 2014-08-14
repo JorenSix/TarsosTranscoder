@@ -14,7 +14,7 @@ public final class MacFFMPEGLocator extends FFMPEGLocator {
 
 	private final String path;
 
-	private final static String FFMPEG_BINARY = "/be/hogent/tarsos/transcoder/resources/ffmpeg_mac";
+	private final static String FFMPEG_BINARY = "/be/tarsos/transcoder/resources/ffmpeg_mac";
 
 	public MacFFMPEGLocator() {
 		if (pickMe()) {

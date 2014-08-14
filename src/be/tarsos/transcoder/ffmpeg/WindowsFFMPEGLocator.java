@@ -36,7 +36,7 @@ public class WindowsFFMPEGLocator extends FFMPEGLocator {
 	 */
 	private final String path;
 
-	private final static String FFMPEG_BINARY = "/be/hogent/tarsos/transcoder/resources/ffmpeg_win";
+	private final static String FFMPEG_BINARY = "/be/tarsos/transcoder/resources/ffmpeg_win";
 
 	/**
 	 * It builds the default FFMPEGLocator, exporting the ffmpeg executable on a

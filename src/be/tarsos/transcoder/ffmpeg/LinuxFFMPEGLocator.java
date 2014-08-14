@@ -37,7 +37,7 @@ public class LinuxFFMPEGLocator extends FFMPEGLocator {
 	 */
 	private final String path;
 
-	private final static String FFMPEG_BINARY = "/be/hogent/tarsos/transcoder/resources/ffmpeg_linux";
+	private final static String FFMPEG_BINARY = "/be/tarsos/transcoder/resources/ffmpeg_linux";
 
 	public LinuxFFMPEGLocator() {
 		if (pickMe()) {
