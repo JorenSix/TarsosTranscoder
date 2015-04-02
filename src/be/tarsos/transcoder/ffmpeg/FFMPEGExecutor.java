@@ -113,7 +113,7 @@ class FFMPEGExecutor {
 			if(isFile){
 				String key = "file" + fileNumber;
 				map.put(key, new File(arg));
-				cmdLine.addArgument("${" + key + "}",false);
+				cmdLine.addArgument("'${" + key + "}'",false);
 				fileNumber++;
 			} else {
 				cmdLine.addArgument(arg);
