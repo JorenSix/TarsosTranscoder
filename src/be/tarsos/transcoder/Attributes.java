@@ -60,6 +60,12 @@ public class Attributes {
 	 */
 	private Integer volume = null;
 
+	/**
+	 * The seek time value for the attributes process. If null or not specified a
+	 * the default value will be 0. If 0 no seek will be performed.
+	 */
+	private Integer seekTime = null;
+
 	public Attributes(final String format, final String codec, final Integer samplingRate,
 			final Integer channels, final Integer bitRate, final Integer volume) {
 		setBitRate(bitRate);
@@ -188,6 +194,27 @@ public class Attributes {
 	}
 
 	/**
+	 * Returns the seek time value for the attributes process.
+	 * 
+	 * @return The seek time value for the attributes process.
+	 */
+	public Integer getSeekTime() {
+		return seekTime;
+	}
+
+	/**
+	 * Sets the seek time value for the attributes process. If null or
+         * not specified the default value will be 0. If 0 no seek will be
+	 * performed.
+	 * 
+	 * @param seekTime
+	 *            The seek time value for the attributes process.
+	 */
+	public void setSeekTime(Integer seekTime) {
+		this.seekTime = seekTime;
+	}
+
+	/**
 	 * The format name for the encoded target multimedia file. Be sure this
 	 * format is supported by checking your ffmpeg version.
 	 */
@@ -237,8 +264,8 @@ public class Attributes {
 	@Override
 	public String toString() {
 		return String.format(
-				"%s format=%s, codec=%s, bitrate=%s, samplingrate=%s,duration=%s, channels=%s , volume=%s",
-				getClass().getName(), format, codec, bitRate, samplingRate, duration, channels, volume);
+				"%s format=%s, codec=%s, bitrate=%s, samplingrate=%s, duration=%s, channels=%s , volume=%s seekTime=%s",
+				getClass().getName(), format, codec, bitRate, samplingRate, duration, channels, volume, seekTime);
 	}
 
 }
