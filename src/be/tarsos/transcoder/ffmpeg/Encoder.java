@@ -297,6 +297,18 @@ public class Encoder {
 	private FFMPEGExecutor construcExecutor(Attributes attributes,String source){
 		FFMPEGExecutor ffmpeg = locator.createExecutor();
 		
+		Integer seekTime = attributes.getSeekTime();
+		if (seekTime != null) {
+			ffmpeg.addArgument("-ss");
+			int S = seekTime; //ms
+			int s = S/1000;   //sec
+			int m = s/60;     //min
+			int h = m/60;     //hr
+			ffmpeg.addArgument(String
+				.format("%2d:%2d:%2d.%3d", h%100, m%60, s%60, S%1000)
+				.replaceAll(" ","0"));
+		}
+		
 		ffmpeg.addArgument("-i");
 		ffmpeg.addArgument(source);
 
