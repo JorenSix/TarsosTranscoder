@@ -206,7 +206,6 @@ public class Transcoder {
 			info = e.getInfo(new File(file));
 		} catch (final InputFormatException e1) {
 			LOG.severe("Unknown input file format: " + file);
-			e1.printStackTrace();
 		} catch (final EncoderException e1) {
 			LOG.warning("Could not get information about:" + file);
 		}
