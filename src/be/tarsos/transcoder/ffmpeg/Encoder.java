@@ -139,7 +139,7 @@ public class Encoder {
 			EncoderException {
 		Pattern p1 = Pattern.compile(".*\\s*Input #0, (\\w+).+$\\s*.*", Pattern.CASE_INSENSITIVE
 				| Pattern.MULTILINE | Pattern.UNIX_LINES);
-		Pattern p2 = Pattern.compile(".*\\s*Duration: (\\d\\d):(\\d\\d):(\\d\\d)\\.(\\d).*",
+		Pattern p2 = Pattern.compile(".*\\s*Duration: (\\d\\d):(\\d\\d):(\\d\\d).(\\d\\d),",
 				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.UNIX_LINES);
 		Pattern p3 = Pattern.compile(".*\\s*Stream #\\S+: ((?:Audio)|(?:Video)|(?:Data)): (.*)\\s*.*",
 				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.UNIX_LINES);
@@ -161,8 +161,8 @@ public class Encoder {
 			long hours = Integer.parseInt(m.group(1));
 			long minutes = Integer.parseInt(m.group(2));
 			long seconds = Integer.parseInt(m.group(3));
-			long dec = Integer.parseInt(m.group(4));
-			long duration = dec * 100L + seconds * 1000L + minutes * 60L * 1000L + hours * 60L * 60L * 1000L;
+			long centiSeconds = Integer.parseInt(m.group(4));
+			long duration = centiSeconds * 10L + (seconds + minutes * 60L + hours * 60L * 60L) * 1000L;
 			info.setDuration(duration);
 		}
 
